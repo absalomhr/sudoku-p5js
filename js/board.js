@@ -1,11 +1,4 @@
 const board_sketch = (s) => {
-    // Colors used in the design of the board
-    const board_bg_color_dark = "rgb(152,72,61)";
-    const board_bg_color_light = "rgb(222, 198, 148)";
-    const outline_color = "rgb(85,43,38)";
-    const line_color = "rgb(13, 12, 12)";
-    const extra_color = "rgb(156, 108, 153)";
-    const focus_color = "rgb(172, 243, 157)";
     let font;
     // Game functionality variables
     // The memory representation of the puzzle in the board
@@ -30,11 +23,11 @@ const board_sketch = (s) => {
         draw_outline();
         puzzle_m = generate_puzzle();
         piece_m = get_piece_matrix();
-        draw_pices();
+        draw_pieces();
     }
 
     s.mousePressed = () => {
-        console.log("wtf");
+        // console.log("wtf");
     }
 
     function write_text(string, size, x, y, tcolor, font, stroke_w=null, stroke_col=null){
@@ -50,16 +43,16 @@ const board_sketch = (s) => {
         s.text(string, x, y);
     }
 
-    function draw_number(n, x, y){
+    function draw_number(n, x, y, tcolor){
         n_size = (2/3) * sqr_sz;
-        tcolor = s.color(focus_color);
         write_text(n, n_size, (x * sqr_sz) + (sqr_sz / 2), (y * sqr_sz) + (sqr_sz / 2.5), tcolor, font);
     }
 
-    function draw_pices(){
+    function draw_pieces(){
         for(let i = 0; i < 9; i++){
             for(let j = 0; j < 9; j++){
-                draw_number(puzzle_m[i][j], j, i);  
+                if (puzzle_m[i][j] != 0)
+                    draw_number(puzzle_m[i][j], j, i, s.color(line_color));  
             }
         }
     }
@@ -92,22 +85,23 @@ const board_sketch = (s) => {
         return arr;
     }
 
-    function draw_square(x, y, w, f_col, cor_rad=null, stroke_w=null, stroke_col=null){
+    function draw_square(x, y, w, s_col, cor_rad=null, stroke_w=null, stroke_col=null){
+        let radius = 10; // for rounding borders
         s.noStroke();
-        s.fill(f_col);
+        s.fill(s_col);
         let tl = 0, tr = 0, br = 0, bl = 0;
         if(stroke_col && stroke_w){
             s.stroke(stroke_col);
             s.strokeWeight(stroke_w);
         } else if(cor_rad){
-            if(cor_rad === "tl")
-                tl = 5;
-            else if(cor_rad === "tr")
-                tr = 5;
-            else if(cor_rad === "br")
-                br = 5;
-            else if(cor_rad === "bl")
-                bl = 5;
+            if(cor_rad.indexOf("tl") > -1)
+                tl = radius;
+            else if(cor_rad.indexOf("tr") > -1)
+                tr = radius;
+            else if(cor_rad.indexOf("br") > -1)
+                br = radius;
+            else if(cor_rad.indexOf("bl") > -1)
+                bl = radius;
         }
         s.rect(x, y, w, w, tl, tr, br, bl);
     }
@@ -127,13 +121,13 @@ const board_sketch = (s) => {
                     col = board_bg_color_dark;
                 else
                     col = board_bg_color_light;  
-                draw_square(i * 3 * sqr_sz, j * 3 * sqr_sz, 3 * sqr_sz, col, 5);
+                draw_square(i * 3 * sqr_sz, j * 3 * sqr_sz, 3 * sqr_sz, col);
             }
         }
     }
 
     function draw_outline(){
-        let line_w = 0.2 * sqr_sz;
+        let line_w = 0.25 * sqr_sz;
         draw_line(0, 0, 0, s.width, outline_color, line_w);
         draw_line(s.width, 0, s.width, s.width, outline_color, line_w);
         draw_line(0, 0, s.width, 0, outline_color, line_w);
