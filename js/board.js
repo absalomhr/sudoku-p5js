@@ -26,20 +26,123 @@ const board_sketch = (s) => {
         draw_pieces();
     }
 
-    s.mousePressed = () => {
-        let current_x = s.floor(s.mouseX / sqr_sz);
-        let current_y = s.floor(s.mouseY / sqr_sz);
-        if((current_x >= 0 && current_x <= 8) && (current_y >= 0 && current_y <= 8) && piece_m[current_y][current_x] === 0){
-            if(user_piece != -1){
-                puzzle_m[current_y][current_x] = user_piece;
-                piece_placed = true;
+    s.mousePressed = async () => {
+        let curr_x = s.floor(s.mouseX / sqr_sz);
+        let curr_y = s.floor(s.mouseY / sqr_sz);
+        if((curr_x >= 0 && curr_x <= 8) && (curr_y >= 0 && curr_y <= 8)){
+            if(piece_m[curr_y][curr_x] === 0){
+                if(user_piece === -1){
+                    puzzle_m[curr_y][curr_x] = 0;
+                    piece_placed = true;
+                    s.clear();
+                    s.redraw();
+                } else{
+                    if(valid_move(curr_x, curr_y, user_piece)){
+                        puzzle_m[curr_y][curr_x] = user_piece;
+                        piece_placed = true;
+                        s.clear();
+                        s.redraw();
+                        if(is_over()){
+                            await new Promise(r => setTimeout(r, 10));
+                            alert("You win!");
+                        }
+                    }
+                }
+                
             } else{
-                puzzle_m[current_y][current_x] = 0;
+                valid_move(curr_x, curr_y, user_piece);
             }
-            s.clear();
-            s.redraw();
         }
     }
+
+    function which_area(x, y){
+        let tempx, tempy;
+        if (x >= 0 && x <= 2)
+            tempx = 0
+        else if (x >= 3 && x <= 5)
+            tempx = 3
+        else if (x >= 6 && x <= 8)
+            tempx = 6
+        if (y >= 0 && y <= 2)
+            tempy = 0
+        else if (y >= 3 && y <= 5)
+            tempy = 3
+        else if (y >= 6 && y <= 8)
+            tempy = 6
+        return [tempx, tempy];
+    }
+
+    function which_color_of_bg(tempx, tempy){
+        let col;
+        if(((tempx === 0 || tempx === 6) && (tempy === 0 || tempy === 6)) || (tempx === 3 && tempy === 3))
+            col = s.color(board_bg_color_dark);
+        else
+            col = s.color(board_bg_color_light);
+        return col;
+    }
+
+    function valid_move(x, y, n){
+        let a;
+        // By area
+        if(piece_m[y][x] === -1){
+            a = which_area(x, y);
+            draw_error(x, y, which_color_of_bg(a[0], a[1]));
+            // s.print("self");
+            return false;
+        } 
+        let valid = true;
+        // Vertical line
+        for(let i = 0; i < 9; i++){
+            if(puzzle_m[i][x] === n){
+                if(i === y)
+                    continue
+                a = which_area(x, i);
+                draw_error(x, i, which_color_of_bg(a[0], a[1]));
+                // s.print("vertical", x, i);
+                valid = false;
+            }
+        }
+        // Horizontal line
+        for(let i = 0; i < 9; i++){
+            if(puzzle_m[y][i] === n){
+                if(i === x)
+                    continue
+                a = which_area(i, y);
+                draw_error(i, y, which_color_of_bg(a[0], a[1]));
+                // s.print("horizontal", i, y);
+                valid = false;
+            }
+        }
+        a = which_area(x, y);
+        for(let i = a[0]; i < a[0] + 3; i++){
+            for(let j = a[1]; j < a[1] + 3; j++){
+                if(puzzle_m[j][i] === n){
+                    // s.print("areas", i, j);
+                    let ar = which_area(i, j);
+                    draw_error(i, j, which_color_of_bg(a[0], a[1]));
+                    valid = false;
+                }
+            }
+        }
+        return valid;
+    }
+
+    async function draw_error(x, y, area_col){
+        draw_square(x * sqr_sz, y * sqr_sz, sqr_sz, s.color(extra_color), null, 3, s.color(focus_color));
+        let col;
+        if(piece_m[y][x] === 0)
+            col = s.color(user_piece_col);
+        else
+            col = s.color(line_color);
+        draw_number(puzzle_m[y][x], x, y, col);
+
+        await new Promise(r => setTimeout(r, 500));
+
+        s.clear();
+        s.redraw();
+    }
+
+    // s.keyPressed = () => { draw_error(0,0, null)}
 
     function write_text(string, size, x, y, tcolor, font, stroke_w=null, stroke_col=null){
         s.noStroke();
@@ -62,23 +165,47 @@ const board_sketch = (s) => {
     function draw_pieces(){
         for(let i = 0; i < 9; i++){
             for(let j = 0; j < 9; j++){
-                if (puzzle_m[i][j] != 0)
-                    draw_number(puzzle_m[i][j], j, i, s.color(line_color));  
+                if (puzzle_m[i][j] != 0){
+                    if(piece_m[i][j] != 0){
+                        draw_number(puzzle_m[i][j], j, i, s.color(line_color));  
+                    } else{
+                        draw_number(puzzle_m[i][j], j, i, s.color(user_piece_col));  
+                    }
+
+                }
             }
         }
     }
 
+    function is_over(){
+        for(let i = 0; i < 9; i++)
+            if(puzzle_m[i].includes(0))
+                return false;
+        return true;
+    }
+
     function generate_puzzle(){
-        let arr = [[9, 5, 1, 4, 6, 7, 3, 8, 2], 
-        [4, 7, 2, 5, 8, 3, 1, 6, 9],
-        [3, 8, 6, 1, 9, 2, 4, 5, 7],
-        [1, 6, 8, 2, 5, 9, 7, 3, 4],
-        [5, 3, 9, 8, 7, 4, 6, 2, 1],
-        [7, 2, 4, 6, 3, 1, 5, 9, 8],
-        [6, 9, 7, 3, 1, 8, 2, 4, 5],
-        [8, 4, 3, 7, 2, 5, 9, 1, 6],
-        [2, 1, 5, 9, 4, 6, 8, 0, 0]];
-        return arr;
+
+        return [[0, 0, 1, 0, 0, 0, 0, 8, 0], 
+                [4, 7, 0, 5, 0, 0, 1, 0, 0],
+                [3, 8, 6, 0, 0, 2, 0, 0, 0],
+                [1, 6, 0, 0, 0, 0, 7, 0, 4],
+                [0, 0, 0, 0, 0, 4, 6, 0, 0],
+                [7, 0, 0, 0, 3, 0, 5, 0, 0],
+                [0, 9, 0, 0, 0, 0, 0, 4, 0],
+                [0, 0, 3, 7, 2, 0, 9, 0, 6],
+                [0, 0, 5, 0, 0, 6, 0, 7, 3]]
+
+        // let arr = [[9, 5, 1, 4, 6, 7, 3, 8, 2], 
+        // [4, 7, 2, 5, 8, 3, 1, 6, 9],
+        // [3, 8, 6, 1, 9, 2, 4, 5, 7],
+        // [1, 6, 8, 2, 5, 9, 7, 3, 4],
+        // [5, 3, 9, 8, 7, 4, 6, 2, 1],
+        // [7, 2, 4, 6, 3, 1, 5, 9, 8],
+        // [6, 9, 7, 3, 1, 8, 2, 4, 5],
+        // [8, 4, 3, 7, 2, 5, 9, 1, 6],
+        // [2, 1, 5, 9, 4, 6, 8, 0, 0]];
+        // return arr;
     }
 
     function get_piece_matrix(){

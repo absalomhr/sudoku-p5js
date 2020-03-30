@@ -8,6 +8,8 @@ const outline_color = "rgb(85,43,38)";
 const line_color = "rgb(13, 12, 12)";
 const extra_color = "rgb(172, 243, 157)";
 const focus_color = "rgb(156, 108, 153)";
+const user_piece_col = "rgb(239, 91, 91)";
+
 // Game functionality variables
 let user_piece = -1;
 let piece_placed = false;
