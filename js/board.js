@@ -15,19 +15,30 @@ const board_sketch = (s) => {
     s.setup = () => {
         s.createCanvas(sqr_sz * 9, sqr_sz * 9);
         s.noLoop();
+        puzzle_m = generate_puzzle();
+        piece_m = get_piece_matrix();
     }
 
     s.draw = () => {
         draw_board();
         draw_inner_lines();
         draw_outline();
-        puzzle_m = generate_puzzle();
-        piece_m = get_piece_matrix();
         draw_pieces();
     }
 
     s.mousePressed = () => {
-        // console.log("wtf");
+        let current_x = s.floor(s.mouseX / sqr_sz);
+        let current_y = s.floor(s.mouseY / sqr_sz);
+        if((current_x >= 0 && current_x <= 8) && (current_y >= 0 && current_y <= 8) && piece_m[current_y][current_x] === 0){
+            if(user_piece != -1){
+                puzzle_m[current_y][current_x] = user_piece;
+                piece_placed = true;
+            } else{
+                puzzle_m[current_y][current_x] = 0;
+            }
+            s.clear();
+            s.redraw();
+        }
     }
 
     function write_text(string, size, x, y, tcolor, font, stroke_w=null, stroke_col=null){
@@ -58,7 +69,7 @@ const board_sketch = (s) => {
     }
 
     function generate_puzzle(){
-        return [[9, 5, 1, 4, 6, 7, 3, 8, 2], 
+        let arr = [[9, 5, 1, 4, 6, 7, 3, 8, 2], 
         [4, 7, 2, 5, 8, 3, 1, 6, 9],
         [3, 8, 6, 1, 9, 2, 4, 5, 7],
         [1, 6, 8, 2, 5, 9, 7, 3, 4],
@@ -66,7 +77,8 @@ const board_sketch = (s) => {
         [7, 2, 4, 6, 3, 1, 5, 9, 8],
         [6, 9, 7, 3, 1, 8, 2, 4, 5],
         [8, 4, 3, 7, 2, 5, 9, 1, 6],
-        [2, 1, 5, 9, 4, 6, 8, 0, 0]]  
+        [2, 1, 5, 9, 4, 6, 8, 0, 0]];
+        return arr;
     }
 
     function get_piece_matrix(){

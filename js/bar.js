@@ -106,7 +106,7 @@ const bar_sketch = (s) => {
     s.mousePressed = () => {
         let current_x = s.floor(s.mouseX / sqr_sz);
         let current_y = s.floor(s.mouseY / sqr_sz);
-        if ((current_x >= 0 && current_x <= 9) && current_y === 0){
+        if ((current_x >= 0 && current_x <= 8) && current_y === 0){
             if(user_piece === 0){
                 user_piece = pieces_array[current_x];
             } else {
@@ -117,6 +117,10 @@ const bar_sketch = (s) => {
             draw_flower(current_x, s.color(focus_color));
             draw_number(pieces_array[current_x], current_x, 0);
             // s.print(user_piece);
+        } else if(piece_placed){
+            s.redraw();
+            user_piece = -1;
+            piece_placed = false;
         }
     }
 }

@@ -9,7 +9,8 @@ const line_color = "rgb(13, 12, 12)";
 const extra_color = "rgb(172, 243, 157)";
 const focus_color = "rgb(156, 108, 153)";
 // Game functionality variables
-let user_piece = 0;
+let user_piece = -1;
+let piece_placed = false;
 
 let p5_board = new p5(board_sketch, "board-section");
 let p5_bar = new p5(bar_sketch, "bar-section");
