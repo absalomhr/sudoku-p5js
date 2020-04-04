@@ -103,7 +103,7 @@ const bar_sketch = (s) => {
         s.ellipse((x * sqr_sz) + s.floor(sqr_sz / 2), s.floor(sqr_sz / 2), 25, 6);
     }
 
-    s.mousePressed = () => {
+    s.mouseClicked = () => {
         let current_x = s.floor(s.mouseX / sqr_sz);
         let current_y = s.floor(s.mouseY / sqr_sz);
         if ((current_x >= 0 && current_x <= 8) && current_y === 0){

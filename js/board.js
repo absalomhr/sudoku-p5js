@@ -7,6 +7,17 @@ const board_sketch = (s) => {
     // And which pieces are set by the user playing the game
     // This will help with coloring the pieces and restarting the current puzzle
     let piece_m;
+
+    rst_btn.addEventListener("click", () => {
+        for(let i = 0; i < 9; i++){
+            for(let j = 0; j < 9; j++){
+                if(piece_m[j][i] === 0)
+                    puzzle_m[j][i] = 0;
+            }
+        }
+        s.clear();
+        s.redraw();
+    });
     
     s.preload = () => {
         font = s.loadFont("assets/Sen-Regular.ttf");
@@ -26,7 +37,7 @@ const board_sketch = (s) => {
         draw_pieces();
     }
 
-    s.mousePressed = async () => {
+    s.mouseClicked = async () => {
         let curr_x = s.floor(s.mouseX / sqr_sz);
         let curr_y = s.floor(s.mouseY / sqr_sz);
         if((curr_x >= 0 && curr_x <= 8) && (curr_y >= 0 && curr_y <= 8)){
@@ -184,29 +195,100 @@ const board_sketch = (s) => {
         return true;
     }
 
-    function generate_puzzle(){
-
-        return [[0, 0, 1, 0, 0, 0, 0, 8, 0], 
-                [4, 7, 0, 5, 0, 0, 1, 0, 0],
-                [3, 8, 6, 0, 0, 2, 0, 0, 0],
-                [1, 6, 0, 0, 0, 0, 7, 0, 4],
-                [0, 0, 0, 0, 0, 4, 6, 0, 0],
-                [7, 0, 0, 0, 3, 0, 5, 0, 0],
-                [0, 9, 0, 0, 0, 0, 0, 4, 0],
-                [0, 0, 3, 7, 2, 0, 9, 0, 6],
-                [0, 0, 5, 0, 0, 6, 0, 7, 3]]
-
-        // let arr = [[9, 5, 1, 4, 6, 7, 3, 8, 2], 
-        // [4, 7, 2, 5, 8, 3, 1, 6, 9],
-        // [3, 8, 6, 1, 9, 2, 4, 5, 7],
-        // [1, 6, 8, 2, 5, 9, 7, 3, 4],
-        // [5, 3, 9, 8, 7, 4, 6, 2, 1],
-        // [7, 2, 4, 6, 3, 1, 5, 9, 8],
-        // [6, 9, 7, 3, 1, 8, 2, 4, 5],
-        // [8, 4, 3, 7, 2, 5, 9, 1, 6],
-        // [2, 1, 5, 9, 4, 6, 8, 0, 0]];
-        // return arr;
+    function array_diff(arr1, arr2){
+        let res = [];
+        arr1.forEach((item) => {
+            if(arr2.indexOf(item) === -1){
+                res.push(item);
+            }
+        });
+        return res;
     }
+    
+    function arr_intersection(arr1, arr2){
+        let res = [];
+        arr1.forEach((item) => {
+            if(arr2.indexOf(item) != -1)
+                res.push(item);
+        });
+        return res;
+    }
+    
+    function get_available(m, x, y){
+        // s.print(x, y);
+        let pieces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let avlx = array_diff(pieces, m[y]);
+        // s.print("x: ",avlx);
+        let y_col = []
+        for(let i = 0; i < 9; i++){
+            y_col.push(m[i][x]);
+        }
+        let avly = array_diff(pieces, y_col);
+        // s.print("y: ",avly);
+        coords = which_area(x, y);
+        // s.print("co:", coords);
+        let ar_pieces = [];
+        for(let i = coords[0]; i < coords[0] + 3; i++){
+            for(let j = coords[1]; j < coords[1] + 3; j++){
+                if(m[j][i] === 0){
+                    continue
+                } else {
+                    ar_pieces.push(m[j][i]);
+                }
+            }
+        }
+        avlar = array_diff(pieces, ar_pieces);
+        // s.print("ar: ", avlar);
+        return arr_intersection(avlar, arr_intersection(avlx, avly));
+    }
+
+    function shuffle(array){
+        let i = array.length, j = 0, temp;
+        while (i--) {
+            j = Math.floor(Math.random() * (i+1));
+            temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    // function generate_puzzle(){
+    //     let arr = [];
+    //     let pieces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    //     for(let i = 0; i < 9; i++){
+    //         arr.push([]);
+    //         for(let j = 0; j < 9; j++){
+    //             arr[i].push(0);
+    //         }
+    //     }
+    //     i = 1;
+    //     while(true){
+    //         let error = false;
+    //         arr[0] = shuffle(pieces);
+    //         for(let i = 1; i < 9; i++){
+    //             for(let j = 0; j < 9; j++){
+    //                 let able = get_available(arr, i, j);
+    //                 if(able.length === 0){
+    //                     error = true;
+    //                     // console.log("error");
+    //                     break;
+    //                 }else{
+    //                     arr[i][j] = able[0];
+    //                 }   
+    //             }
+    //             if(error)
+    //                 break;
+    //         }
+    //         i--;
+    //         if(!error || i <= 0)
+    //             break;
+    //     }
+    //     return arr;
+    // }
+    
+
+
 
     function get_piece_matrix(){
         let arr = [];
