@@ -7,6 +7,8 @@ const board_sketch = (s) => {
     // And which pieces are set by the user playing the game
     // This will help with coloring the pieces and restarting the current puzzle
     let piece_m;
+    // Will store the solution
+    let sol;
 
     rst_btn.addEventListener("click", () => {
         for(let i = 0; i < 9; i++){
@@ -18,6 +20,14 @@ const board_sketch = (s) => {
         s.clear();
         s.redraw();
     });
+
+    slv_btn.addEventListener("click", () => {
+        if(confirm("Are you sure?!")){
+            s.clear();
+            puzzle_m = sol;
+            s.redraw();
+        }
+    });
     
     s.preload = () => {
         font = s.loadFont("assets/Sen-Regular.ttf");
@@ -26,7 +36,9 @@ const board_sketch = (s) => {
     s.setup = () => {
         s.createCanvas(sqr_sz * 9, sqr_sz * 9);
         s.noLoop();
-        puzzle_m = generate_puzzle();
+        let boards = generate_puzzle();
+        puzzle_m = boards[0];
+        sol = boards[1];
         piece_m = get_piece_matrix();
     }
 
@@ -153,8 +165,6 @@ const board_sketch = (s) => {
         s.redraw();
     }
 
-    // s.keyPressed = () => { draw_error(0,0, null)}
-
     function write_text(string, size, x, y, tcolor, font, stroke_w=null, stroke_col=null){
         s.noStroke();
         if(stroke_w){
@@ -253,39 +263,11 @@ const board_sketch = (s) => {
         return array;
     }
 
-    // function generate_puzzle(){
-    //     let arr = [];
-    //     let pieces = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    //     for(let i = 0; i < 9; i++){
-    //         arr.push([]);
-    //         for(let j = 0; j < 9; j++){
-    //             arr[i].push(0);
-    //         }
-    //     }
-    //     i = 1;
-    //     while(true){
-    //         let error = false;
-    //         arr[0] = shuffle(pieces);
-    //         for(let i = 1; i < 9; i++){
-    //             for(let j = 0; j < 9; j++){
-    //                 let able = get_available(arr, i, j);
-    //                 if(able.length === 0){
-    //                     error = true;
-    //                     // console.log("error");
-    //                     break;
-    //                 }else{
-    //                     arr[i][j] = able[0];
-    //                 }   
-    //             }
-    //             if(error)
-    //                 break;
-    //         }
-    //         i--;
-    //         if(!error || i <= 0)
-    //             break;
-    //     }
-    //     return arr;
-    // }
+    function generate_puzzle(){
+        let g = new Generator();
+        let res = g.generate_puzzle();
+        return res;
+    }
     
 
 

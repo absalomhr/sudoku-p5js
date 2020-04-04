@@ -94,9 +94,3 @@ class Generator{
         return [uns ,puzzle];
     }
 }
-
-let g = new Generator();
-a=[1,2,3,4,5,6,7,8,9];
-a=g.generate_puzzle();
-console.table(a[0]);
-console.table(a[1]);

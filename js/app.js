@@ -14,6 +14,7 @@ const user_piece_col = "rgb(239, 91, 91)";
 let user_piece = -1;
 let piece_placed = false;
 let rst_btn = document.getElementById("restart");
+let slv_btn = document.getElementById("solve");
 
 let p5_board = new p5(board_sketch, "board-section");
 let p5_bar = new p5(bar_sketch, "bar-section");
