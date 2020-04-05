@@ -11,20 +11,22 @@ const board_sketch = (s) => {
     let sol;
 
     rst_btn.addEventListener("click", () => {
-        for(let i = 0; i < 9; i++){
-            for(let j = 0; j < 9; j++){
-                if(piece_m[j][i] === 0)
-                    puzzle_m[j][i] = 0;
+        if(confirm("Are you sure?!")){
+            for(let i = 0; i < 9; i++){
+                for(let j = 0; j < 9; j++){
+                    if(piece_m[j][i] === 0)
+                        puzzle_m[j][i] = 0;
+                }
             }
+            s.clear();
+            s.redraw();
         }
-        s.clear();
-        s.redraw();
     });
 
     slv_btn.addEventListener("click", () => {
         if(confirm("Are you sure?!")){
             s.clear();
-            puzzle_m = sol;
+            puzzle_m = sol.map((a) => [...a]);
             s.redraw();
         }
     });

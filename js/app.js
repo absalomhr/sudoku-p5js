@@ -1,6 +1,6 @@
 // Global variables
 // Size of the squares of the board
-const sqr_sz = 30;
+const sqr_sz = 25;
 // Colors used in the design of the board
 const board_bg_color_dark = "rgb(152,72,61)";
 const board_bg_color_light = "rgb(222, 198, 148)";

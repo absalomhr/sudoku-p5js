@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku p5js</title>
     <script src="js/p5.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 </head>
 <body>
     <h1 id="title">Sudoku</h1>
+    <p><a target="_blank" href="https://github.com/absalomhr/sudoku-p5js"><i class="fa fa-github"></i> absalomhr</a></p>
+    <section id="theRules" class="rules">
+        <h1 class="subtitle"> How to play: </h1>
+        <ul class="list">
+            <li>Each row, column, and square can contain each number (typically 1 to 9) exactly once.</li>
+            <li>Select the piece you want to put in the board then click in a valid space</li>
+        </ul> 
+    </section>
     <section id="board-section"></section>
     <section id="bar-section"></section>
     <nav>
