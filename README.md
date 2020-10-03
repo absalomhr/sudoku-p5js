@@ -14,4 +14,4 @@ Animations and drawings are made "manually" with p5js
 ### Solved Board
 Player can choose to let the program solve the sudoku
 
-![Sudoku solved board](/SS/sudo2.jpg)
+![Sudoku solved board](/SS/sudo2.png)
